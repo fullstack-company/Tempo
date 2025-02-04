@@ -23,11 +23,9 @@ import io.tempo.internal.domain.useCases.GetBestAvailableTimeSourceUC
 import io.tempo.internal.domain.useCases.GetTimeNowUC
 import io.tempo.internal.domain.useCases.PeriodicallySyncUC
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.BroadcastChannel
-import kotlinx.coroutines.channels.Channel.Factory.BUFFERED
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
 
 internal class TempoInstance(
@@ -42,7 +40,11 @@ internal class TempoInstance(
     private var activeTimeWrapper: TimeSourceWrapper? = null
     private var coroutineScope: CoroutineScope? = null
 
-    private val manualSyncTriggerChannel = BroadcastChannel<Unit>(BUFFERED)
+    private val manualSyncTriggerChannel = MutableSharedFlow<Unit>(
+        replay = 0,
+        extraBufferCapacity = 64,
+        onBufferOverflow = BufferOverflow.SUSPEND
+    )
 
     fun start() {
         require(coroutineScope == null) { "Tempo is already running" }
@@ -53,8 +55,7 @@ internal class TempoInstance(
             ).apply {
                 launch {
                     async {
-                        @Suppress("DEPRECATION_ERROR")
-                        periodicallySyncUC(manualSyncTriggerChannel.asFlow())
+                        periodicallySyncUC(manualSyncTriggerChannel)
                     }
 
                     getBestAvailableTimeSourceUC()
@@ -72,7 +73,7 @@ internal class TempoInstance(
     }
 
     fun triggerManualActionNow() {
-        manualSyncTriggerChannel.safeOffer(Unit)
+        runCatching { manualSyncTriggerChannel.tryEmit(Unit) }
     }
 
     fun nowOrNull(): Long? = activeTimeWrapper?.let(getTimeNowUC::invoke)
