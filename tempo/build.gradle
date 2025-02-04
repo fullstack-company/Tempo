@@ -2,7 +2,13 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: "de.mannodermaus.android-junit5"
 
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
+    namespace = "io.tempo"
+
     compileSdkVersion androidConfig.compileSdkVersion
 
     defaultConfig {

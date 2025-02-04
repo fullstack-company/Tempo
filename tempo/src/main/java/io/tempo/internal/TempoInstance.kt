@@ -53,6 +53,7 @@ internal class TempoInstance(
             ).apply {
                 launch {
                     async {
+                        @Suppress("DEPRECATION_ERROR")
                         periodicallySyncUC(manualSyncTriggerChannel.asFlow())
                     }
 

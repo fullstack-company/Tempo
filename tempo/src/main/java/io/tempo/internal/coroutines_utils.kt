@@ -24,5 +24,5 @@ internal suspend fun <T> retryIO(
 }
 
 internal fun <V : Any> SendChannel<V>.safeOffer(a: V) {
-    runCatching { offer(a) }
+    runCatching { trySend(a).isSuccess }
 }

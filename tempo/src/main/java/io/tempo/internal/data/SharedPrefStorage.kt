@@ -67,7 +67,7 @@ internal class SharedPrefStorage(
                 .forEach { safeOffer(it) }
 
             val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-                if (key.startsWith(KEY_SOURCE_CACHE_PREFIX)) {
+                if (key?.startsWith(KEY_SOURCE_CACHE_PREFIX) == true) {
                     sharedPreferences.getString(key, null)
                         ?.let(TimeSourceCacheSerializer::parse)
                         ?.let { safeOffer(it) }

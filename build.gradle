@@ -6,9 +6,9 @@ ext {
     def versionCode = versionPatch + versionMinor * 100 + versionMajor * 10000
 
     androidConfig = [
-            compileSdkVersion        : 28,
+            compileSdkVersion        : 34,
             minSdkVersion            : 16,
-            targetSdkVersion         : 28,
+            targetSdkVersion         : 34,
             versionCode              : versionCode,
             versionName              : "${versionMajor}.${versionMinor}.${versionPatch}",
 
@@ -20,23 +20,23 @@ buildscript {
     ext {
         depPaths = {
             def versions = [
-                    gradlePlugin  : '4.2.1',
-                    androidJunit5 : '1.6.2.0',
-                    versions      : '0.36.0',
-                    kotlin        : '1.5.10',
-                    coroutines    : '1.5.0',
-                    appCompat     : '1.2.0',
-                    material      : '1.2.0',
-                    workManager   : '2.4.0',
+                    gradlePlugin  : '8.8.0',
+                    androidJunit5 : '1.10.0.0',
+                    versions      : '0.48.0',
+                    kotlin        : '1.9.22',
+                    coroutines    : '1.7.3',
+                    appCompat     : '1.6.1',
+                    material      : '1.9.0',
+                    workManager   : '2.8.1',
 
-                    junit         : '4.12',
-                    junitAnd      : '1.1.2-rc03',
-                    spek          : '2.0.14',
-                    mockk         : '1.10.2',
+                    junit         : '4.13.2',
+                    junitAnd      : '1.1.5',
+                    spek          : '2.0.19',
+                    mockk         : '1.13.8',
                     hamkrest      : '1.8.0.1',
-                    mockitoKotlin : '1.5.0',
-                    mockitoAndroid: '2.8.47',
-                    espresso      : '3.3.0-rc03',
+                    mockitoKotlin : '4.1.0',
+                    mockitoAndroid: '5.4.0',
+                    espresso      : '3.5.1',
             ]
 
             [
@@ -53,7 +53,7 @@ buildscript {
                     coroutinesAnd : "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines",
                     appCompat     : "androidx.appcompat:appcompat:$versions.appCompat",
                     material      : "com.google.android.material:material:$versions.material",
-                    workManager   : "androidx.work:work-runtime:$versions.workManager",
+                    workManager   : "androidx.work:work-runtime-ktx:$versions.workManager",
 
                     junit         : "junit:junit:$versions.junit",
                     junitAnd      : "androidx.test.ext:junit:$versions.junitAnd",
@@ -61,7 +61,7 @@ buildscript {
                     spekRunner    : "org.spekframework.spek2:spek-runner-junit5:$versions.spek",
                     mockk         : "io.mockk:mockk:$versions.mockk",
                     hamkrest      : "com.natpryce:hamkrest:$versions.hamkrest",
-                    mockitoKotlin : "com.nhaarman:mockito-kotlin-kt1.1:$versions.mockitoKotlin",
+                    mockitoKotlin : "org.mockito.kotlin:mockito-kotlin:$versions.mockitoKotlin",
                     mockitoAndroid: "org.mockito:mockito-android:$versions.mockitoAndroid",
                     espressoCore  : "androidx.test.espresso:espresso-core:$versions.espresso",
             ]
@@ -69,8 +69,9 @@ buildscript {
     }
 
     repositories {
+        gradlePluginPortal()
         google()
-        jcenter()
+        mavenCentral()
     }
 
     dependencies {
@@ -89,7 +90,7 @@ apply plugin: "com.github.ben-manes.versions"
 allprojects {
     repositories {
         google()
-        jcenter()
+        mavenCentral()
     }
 
     if (!project.name.contains("sample")) {

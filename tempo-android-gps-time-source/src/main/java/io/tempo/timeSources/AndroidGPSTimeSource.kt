@@ -29,10 +29,7 @@ import io.tempo.TimeSource
 import io.tempo.TimeSourceConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 
 public class AndroidGPSTimeSource(
@@ -45,22 +42,25 @@ public class AndroidGPSTimeSource(
 
     public override val config: TimeSourceConfig = TimeSourceConfig(id = id, priority = priority)
 
-    private data class GPSInfo(val provider: String, val time: Long)
+    private data class GPSInfo(val provider: String?, val time: Long)
 
     @SuppressLint("MissingPermission")
     override suspend fun requestTime(): Long =
         withContext(Dispatchers.Main) {
-            callbackFlow<GPSInfo> {
+            callbackFlow {
                 if (!hasGPSPermission()) throw PermissionNotSet()
 
                 val listener = object : LocationListener {
-                    override fun onLocationChanged(location: Location?) {
-                        location?.run { runCatching { offer(GPSInfo(provider, time)) } }
+                    override fun onLocationChanged(location: Location) {
+                        runCatching { trySend(GPSInfo(location.provider, location.time)).isSuccess }
                     }
 
-                    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
-                    override fun onProviderEnabled(provider: String?) {}
-                    override fun onProviderDisabled(provider: String?) {}
+                    @Deprecated("Deprecated in Java")
+                    override fun onStatusChanged(provider: String, status: Int, extras: Bundle?) {
+                    }
+
+                    override fun onProviderEnabled(provider: String) {}
+                    override fun onProviderDisabled(provider: String) {}
                 }
 
                 val mgr = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager

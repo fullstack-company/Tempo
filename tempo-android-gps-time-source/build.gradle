@@ -1,7 +1,13 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
+kotlin {
+    jvmToolchain(17)
+}
+
 android {
+    namespace = "io.tempo.timeSources.android_gps_time_source"
+
     compileSdkVersion androidConfig.compileSdkVersion
 
     defaultConfig {
