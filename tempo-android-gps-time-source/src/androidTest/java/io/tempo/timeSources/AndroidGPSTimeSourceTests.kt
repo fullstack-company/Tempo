@@ -24,7 +24,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.natpryce.hamkrest.assertion.assert
+import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.equalTo
 import kotlinx.coroutines.*
 import org.junit.Test
@@ -75,6 +75,7 @@ internal class AndroidGPSTimeSourceTests {
                 AndroidGPSTimeSource(context).requestTime()
             }
         }
-        assert.that(time, equalTo(gpsTime))
+
+        assertThat(time, equalTo(gpsTime))
     }
 }
